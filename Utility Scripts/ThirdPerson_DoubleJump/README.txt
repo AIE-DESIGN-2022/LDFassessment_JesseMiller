@@ -1,0 +1,2 @@
+1. Replace the PlayerController.cs and PlayerInput.cs scripts in the Third Person Template Project with the scripts in this folder
+IMPORTANT - Find the scripts in the project (they are in the same folder), right click on one and select "Show in Explorer". Replace the files in Explorer and not in the project itself!

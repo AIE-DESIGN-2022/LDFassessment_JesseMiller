@@ -1,0 +1,2 @@
+1. Replace the PlayerCharacterController.cs script in the FPS Template Project with the script in this folder
+IMPORTANT - Find the script in the project, right click on one and select "Show in Explorer". Replace the file in Explorer and not in the project itself!
