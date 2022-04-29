@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Unity.FPS.Game;
 
 namespace Unity.FPS.Game
 {
@@ -7,10 +8,13 @@ namespace Unity.FPS.Game
         [Tooltip("Multiplier to apply to the received damage")]
         public float DamageMultiplier = 1f;
 
-        [Range(0, 1)] [Tooltip("Multiplier to apply to self damage")]
+        [Range(0, 1)]
+        [Tooltip("Multiplier to apply to self damage")]
         public float SensibilityToSelfdamage = 0.5f;
 
         public Health Health { get; private set; }
+        public ObjectHealth objectHealth;
+
 
         void Awake()
         {
@@ -19,6 +23,10 @@ namespace Unity.FPS.Game
             if (!Health)
             {
                 Health = GetComponentInParent<Health>();
+            }
+            if (!Health)
+            {
+                objectHealth = GetComponent<ObjectHealth>();
             }
         }
 
@@ -42,6 +50,25 @@ namespace Unity.FPS.Game
 
                 // apply the damages
                 Health.TakeDamage(totalDamage, damageSource);
+            }
+            else
+            {
+                var totalDamage = damage;
+
+                // skip the crit multiplier if it's from an explosion
+                if (!isExplosionDamage)
+                {
+                    totalDamage *= DamageMultiplier;
+                }
+
+                // potentially reduce damages if inflicted by self
+                if (objectHealth.gameObject == damageSource)
+                {
+                    totalDamage *= SensibilityToSelfdamage;
+                }
+
+                // apply the damages
+                objectHealth.TakeDamage(totalDamage, damageSource);
             }
         }
     }
