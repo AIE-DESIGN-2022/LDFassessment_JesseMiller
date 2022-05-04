@@ -13,29 +13,34 @@ namespace Unity.FPS.UI
 
         Compass m_Compass;
         Objective objective;
-        bool isRegistered = false;
+        bool objectiveRegistered = false;
 
         void Awake()
         {
+            //Objective.OnObjectiveActivated += ObjectiveRegistration;
             m_Compass = FindObjectOfType<Compass>();
             DebugUtility.HandleErrorIfNullFindObject<Compass, CompassElement>(m_Compass, this);
 
             objective = GetComponent<Objective>();
+            if (objective != null) return;
+
+            RegistrationLogic();
         }
 
         private void Update()
         {
-            if (!isRegistered && objective != null)
+            if (objective != null)
             {
-                if (objective.IsActivated())
+                if (objective.IsActivated() && !objectiveRegistered)
                 {
-                    RegisterObjective();
-                    isRegistered = true;
+                    RegistrationLogic();
+                    objectiveRegistered = true;
                 }
             }
+
         }
 
-        public void RegisterObjective()
+        private void RegistrationLogic()
         {
             var markerInstance = Instantiate(CompassMarkerPrefab);
 
@@ -43,9 +48,15 @@ namespace Unity.FPS.UI
             m_Compass.RegisterCompassElement(transform, markerInstance);
         }
 
+        private void ObjectiveRegistration(Objective an_objective)
+        {
+            RegistrationLogic();
+        }
+
         void OnDestroy()
         {
             m_Compass.UnregisterCompassElement(transform);
+            //Objective.OnObjectiveActivated -= ObjectiveRegistration;
         }
     }
 }
