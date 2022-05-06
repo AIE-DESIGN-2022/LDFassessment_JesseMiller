@@ -1,5 +1,6 @@
 ﻿using Unity.FPS.Game;
 using UnityEngine;
+using Unity.FPS.AI;
 
 namespace Unity.FPS.UI
 {
@@ -14,29 +15,60 @@ namespace Unity.FPS.UI
         Compass m_Compass;
         Objective objective;
         bool objectiveRegistered = false;
+        public Transform player;
+        float distanceToPlayer = 100;
+        public bool markerOn;
+        bool isEnemy;
 
         void Awake()
         {
             //Objective.OnObjectiveActivated += ObjectiveRegistration;
+            if(GetComponent<EnemyController>())
+            {
+                isEnemy = true;
+            }
+
             m_Compass = FindObjectOfType<Compass>();
             DebugUtility.HandleErrorIfNullFindObject<Compass, CompassElement>(m_Compass, this);
-
+            player = GameObject.FindWithTag("Player").transform;
             objective = GetComponent<Objective>();
             if (objective != null) return;
-
-            RegistrationLogic();
+            float dist = Vector3.Distance(this.transform.position, player.transform.position);
+            if ( dist < distanceToPlayer && isEnemy)
+            {
+                RegistrationLogic();
+            }
+            else if(!isEnemy)
+            {
+                RegistrationLogic();
+            }
         }
 
         private void Update()
         {
+            float dist = Vector3.Distance(this.transform.position, player.transform.position);
+        
+
             if (objective != null)
             {
                 if (objective.IsActivated() && !objectiveRegistered)
                 {
+                    
                     RegistrationLogic();
                     objectiveRegistered = true;
                 }
             }
+            if(dist < distanceToPlayer && !markerOn && isEnemy)
+            {
+                markerOn = true;
+                RegistrationLogic();
+            }
+            else if(dist > distanceToPlayer && markerOn && isEnemy)
+            {
+                markerOn = false;
+                OnDestroy();
+            }
+           
 
         }
 

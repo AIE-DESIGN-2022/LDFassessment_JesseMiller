@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.FPS.Game;
+using UnityEngine.Events;
 namespace Unity.FPS.Game
+
 {
     public class ObjectHealth : MonoBehaviour
     {
@@ -15,7 +17,8 @@ namespace Unity.FPS.Game
         public float GetRatio() => CurrentHealth / MaxHealth;
 
         bool m_IsDead;
-
+        public UnityEvent onDeathAction;
+  
         void Start()
         {
             CurrentHealth = MaxHealth;
@@ -42,6 +45,7 @@ namespace Unity.FPS.Game
             if (CurrentHealth <= 0f)
             {
                 m_IsDead = true;
+                onDeathAction.Invoke();
                 Destroy(this.gameObject);
             }
         }
