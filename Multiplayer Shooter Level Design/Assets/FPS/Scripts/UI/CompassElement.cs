@@ -58,5 +58,10 @@ namespace Unity.FPS.UI
             m_Compass.UnregisterCompassElement(transform);
             //Objective.OnObjectiveActivated -= ObjectiveRegistration;
         }
+
+        public void DestroyObject()
+        {
+            Destroy(gameObject);
+        }
     }
 }
